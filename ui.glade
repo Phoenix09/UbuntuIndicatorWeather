@@ -26,6 +26,9 @@
       <row>
         <col id="0">°F, mile, mph</col>
       </row>
+      <row>
+        <col id="0">°C, mile, mph</col>
+      </row>
     </data>
   </object>
   <object class="GtkDialog" id="dialog_preferences">

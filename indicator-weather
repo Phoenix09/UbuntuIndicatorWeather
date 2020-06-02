@@ -161,7 +161,7 @@ class WeatherIndicator:
     @retry(stop_max_attempt_number=100, wait_exponential_multiplier=500, wait_exponential_max=60000, retry_on_result=retry_if_result_none)
     def get_weather(self):
         try:
-            if(self.configuration.get_temperature_scale()):
+            if(self.configuration.get_temperature_scale() == 1):
                 temperature_scale = 'true'
             else:
                 temperature_scale = 'false'
@@ -173,6 +173,12 @@ class WeatherIndicator:
                 url_path = ('current?lat={}&lon={}&fahrenheit={}'.format(latitude, longitude, temperature_scale))
             weather_service_url = ('http://weather-api.madadipouya.com/v1/weather/{}'.format(url_path))
             json_response = json.loads(urllib.request.urlopen(weather_service_url).read())
+
+            # C and miles
+            if(self.configuration.get_temperature_scale() == 2):
+                json_response["wind"]["speed"] = round(json_response["wind"]["speed"] * 0.62137, 2)
+                json_response["visibility"] = round(json_response["visibility"] * 0.62137, 2)
+
             if self.is_weather_changed(json_response):
                 self.notify_user_on_weather_changes(json_response)
             self.set_weather_metrics(json_response)

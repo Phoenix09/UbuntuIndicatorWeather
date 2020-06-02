@@ -128,19 +128,19 @@ class Configuration:
         self.json_configuration[Parameter.TEMPERATURE_SCALE] = int(value)
 
     def get_temperature_symbol(self):
-        if self.get_temperature_scale():
+        if self.get_temperature_scale() == 1:
             return '\u2109'
         else:
             return '\u2103'
 
     def get_wind_speed_unit(self):
-        if self.get_temperature_scale():
+        if self.get_temperature_scale() != 1:
             return 'mph'
         else:
             return 'km/h'
 
     def get_visibility_unit(self):
-        if self.get_temperature_scale():
+        if self.get_temperature_scale() != 1:
             return 'mi'
         else:
             return 'km'
