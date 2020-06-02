@@ -1,8 +1,4 @@
-
-#! /bin/sh
-""":"
-exec python $0 ${1+"$@"}
-"""
+#!/usr/bin/python3
 
 # This file is part of indicator-weather.
 # Indicator Weather is free software; you can redistribute it and/or modify
@@ -18,7 +14,7 @@ exec python $0 ${1+"$@"}
 # (C) 2015-2018 Kasra Madadipouya <kasra@madadipouya.com>
 
 import sys
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import json
 import gi
 import string
@@ -71,63 +67,63 @@ class WeatherIndicator:
 
     def menu_setup(self):
         self.menu = Gtk.Menu()
-        self.temperature_item = Gtk.MenuItem("")
+        self.temperature_item = Gtk.MenuItem(label="")
         self.temperature_item.show()
         self.menu.append(self.temperature_item)
         self.menu.append(self.create_separator_menu_item())
         # Weather Description
-        self.weather_description_item = Gtk.MenuItem("")
+        self.weather_description_item = Gtk.MenuItem(label="")
         self.weather_description_item.show()
         self.menu.append(self.weather_description_item)
         # Feels Like
-        self.feels_like_temperature_item = Gtk.MenuItem("")
+        self.feels_like_temperature_item = Gtk.MenuItem(label="")
         self.feels_like_temperature_item.show()
         self.menu.append(self.feels_like_temperature_item)
         # Maximum Temperature
-        self.maximum_temperature_item = Gtk.MenuItem("")
+        self.maximum_temperature_item = Gtk.MenuItem(label="")
         self.maximum_temperature_item.show()
         self.menu.append(self.maximum_temperature_item)
         # Minimum Temperature
-        self.minimum_temperature_item = Gtk.MenuItem("")
+        self.minimum_temperature_item = Gtk.MenuItem(label="")
         self.minimum_temperature_item.show()
         self.menu.append(self.minimum_temperature_item)
         # Humidity
-        self.humidity_item = Gtk.MenuItem("")
+        self.humidity_item = Gtk.MenuItem(label="")
         self.humidity_item.show()
         self.menu.append(self.humidity_item)
         # Wind
-        self.wind_item = Gtk.MenuItem("")
+        self.wind_item = Gtk.MenuItem(label="")
         self.wind_item.show()
         self.menu.append(self.wind_item)
         # Cloudiness
-        self.cloudiness_item = Gtk.MenuItem("")
+        self.cloudiness_item = Gtk.MenuItem(label="")
         self.cloudiness_item.show()
         self.menu.append(self.cloudiness_item)
         # Pressure
-        self.pressure_item = Gtk.MenuItem("")
+        self.pressure_item = Gtk.MenuItem(label="")
         self.pressure_item.show()
         self.menu.append(self.pressure_item)
         # Visibility
-        self.visibility_item = Gtk.MenuItem("")
+        self.visibility_item = Gtk.MenuItem(label="")
         self.visibility_item.show()
         self.menu.append(self.visibility_item)
         # Last Update
-        self.last_update_item = Gtk.MenuItem("")
+        self.last_update_item = Gtk.MenuItem(label="")
         self.last_update_item.show()
         self.menu.append(self.last_update_item)
 
         self.menu.append(self.create_separator_menu_item())
-        self.preference_item = Gtk.MenuItem("Preferences")
+        self.preference_item = Gtk.MenuItem(label="Preferences")
         self.preference_item.connect("activate", self.preference)
         self.preference_item.show()
         self.menu.append(self.preference_item)
         
-        self.refresh_item = Gtk.MenuItem(u"Refresh \u27F3")
+        self.refresh_item = Gtk.MenuItem(label="Refresh \u27F3")
         self.refresh_item.connect("activate", self.refresh)
         self.refresh_item.show()
         self.menu.append(self.refresh_item)
         
-        self.quit_item = Gtk.MenuItem("Quit")
+        self.quit_item = Gtk.MenuItem(label="Quit")
         self.quit_item.connect("activate", self.quit)
         self.quit_item.show()
         self.menu.append(self.quit_item)
@@ -175,9 +171,8 @@ class WeatherIndicator:
             else:
                 latitude, longitude = self.configuration.get_coordinates()
                 url_path = ('current?lat={}&lon={}&fahrenheit={}'.format(latitude, longitude, temperature_scale))
-                
             weather_service_url = ('http://weather-api.madadipouya.com/v1/weather/{}'.format(url_path))
-            json_response = json.loads(urllib.urlopen(weather_service_url).read())
+            json_response = json.loads(urllib.request.urlopen(weather_service_url).read())
             if self.is_weather_changed(json_response):
                 self.notify_user_on_weather_changes(json_response)
             self.set_weather_metrics(json_response)
@@ -193,8 +188,8 @@ class WeatherIndicator:
             current_weather_description = string.capwords(weather_json['weather'][0]['description'])
             current_location = self.get_city_name(weather_json['geoLocation'].strip().rsplit(",")[:2])
             try:
-                last_location = unicode(last_location, 'utf-8')
-                current_location = unicode(current_location, 'utf-8')
+                last_location = str(last_location, 'utf-8')
+                current_location = str(current_location, 'utf-8')
             except TypeError:
                 pass
             return last_weather_description != current_weather_description or last_location != current_location
@@ -220,16 +215,16 @@ class WeatherIndicator:
             feels_like_temperature = int(round(float(feels_like_temperature)))
         city = self.get_city_name(json_response['geoLocation'].strip().rsplit(",")[:2])
         if(self.configuration.is_hide_location()):
-            label = u'{temperature}{temperature_symbol}'.format(**locals())
+            label = '{temperature}{temperature_symbol}'.format(**locals())
         else:
-            label = u'{temperature}{temperature_symbol} {city}'.format(**locals())
+            label = '{temperature}{temperature_symbol} {city}'.format(**locals())
         self.indicator.set_label(label, label)
         self.indicator.set_icon(get_local_icon_name(json_response['iconName']))
-        self.temperature_item.get_child().set_text(u'{temperature}{temperature_symbol} {city}'.format(**locals()))
+        self.temperature_item.get_child().set_text('{temperature}{temperature_symbol} {city}'.format(**locals()))
         self.weather_description_item.set_label(string.capwords(json_response['weather'][0]['description']))        
-        feels_like_temperature = u'Feels Like: {feels_like_temperature}{temperature_symbol}'.format(**locals())
-        maximum_temperature = u'Maximum: {maximum_temperature}{temperature_symbol}'.format(**locals())
-        minimum_temperature = u'Minimum: {minimum_temperature}{temperature_symbol}'.format(**locals())
+        feels_like_temperature = 'Feels Like: {feels_like_temperature}{temperature_symbol}'.format(**locals())
+        maximum_temperature = 'Maximum: {maximum_temperature}{temperature_symbol}'.format(**locals())
+        minimum_temperature = 'Minimum: {minimum_temperature}{temperature_symbol}'.format(**locals())
         self.feels_like_temperature_item.set_label(feels_like_temperature)
         self.maximum_temperature_item.set_label(maximum_temperature)
         self.minimum_temperature_item.set_label(minimum_temperature)

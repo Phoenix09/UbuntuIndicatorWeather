@@ -16,10 +16,8 @@ import ast
 import os
 import errno
 from os.path import expanduser
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from ConfigParser import ConfigParser
+from configparser import ConfigParser
+
 
 class Configuration:
 
@@ -44,7 +42,7 @@ class Configuration:
     def __create_start_up_script_if_not_exist(self):
         if not os.path.exists(self.start_up_file_name):
             try:
-            	os.makedirs(os.path.dirname(self.start_up_file_name))
+                os.makedirs(os.path.dirname(self.start_up_file_name))
                 return self.__create_default_start_up_script_and_save_to_disk()
             except OSError as exc: # Guard against race condition
                 if exc.errno == errno.EEXIST:
@@ -73,11 +71,11 @@ class Configuration:
             content.write(config_file)
 
     def __create_default_configuration_and_save_to_disk(self):
-        config = { 
-        	Parameter.TEMPERATURE_SCALE: '0',
-        	Parameter.AUTOMATIC_LOCATION_DETECTION: 'True', 
-        	Parameter.LATITUDE: '0.00000', 
-        	Parameter.LONGITUDE: '0.00000',
+        config = {
+            Parameter.TEMPERATURE_SCALE: '0',
+            Parameter.AUTOMATIC_LOCATION_DETECTION: 'True',
+            Parameter.LATITUDE: '0.00000',
+            Parameter.LONGITUDE: '0.00000',
             Parameter.HIDE_LOCATION: 'False',
             Parameter.ROUND_TEMPERATURE: 'False',
             Parameter.NOTIFICATIONS: 'True'
@@ -111,7 +109,7 @@ class Configuration:
 
     def __get_home_directory(self):
         return expanduser('~')
-    
+
     def __apply_change_log(self):
         if Parameter.HIDE_LOCATION not in self.json_configuration:
             self.json_configuration[Parameter.HIDE_LOCATION] = 'False'
@@ -131,9 +129,9 @@ class Configuration:
 
     def get_temperature_symbol(self):
         if self.get_temperature_scale():
-            return u'\u2109' 
+            return '\u2109'
         else:
-            return u'\u2103'
+            return '\u2103'
 
     def get_wind_speed_unit(self):
         if self.get_temperature_scale():
@@ -149,7 +147,7 @@ class Configuration:
 
     def get_automatic_location_detection(self):
         return self.is_automatic_location_detection()
-    
+
     def set_automatic_location_detection(self, value):
         self.json_configuration[Parameter.AUTOMATIC_LOCATION_DETECTION] = value
 
@@ -186,7 +184,7 @@ class Configuration:
 
     def get_round_temperature(self):
         return self.is_round_temperature()
-    
+
     def set_round_temperature(self, value):
         self.json_configuration[Parameter.ROUND_TEMPERATURE] = value
 
@@ -215,7 +213,7 @@ class Configuration:
         self.__save_ini_start_up_script_to_disk(self.ini_start_up)
 
     def reload_configuration(self):
-    	self.json_configuration = self.__load_configuration_from_disk()
+        self.json_configuration = self.__load_configuration_from_disk()
 
     def save_reload_configuration(self):
         self.save_configuration()
@@ -254,4 +252,4 @@ class Startup:
     SETTING_VALUE_X_GNOME_AUTO_START_ENABLED = 'true'
     SETTING_NAME_X_UBUNTU_GET_TEXT_DOMAIN = 'X-Ubuntu-Gettext-domain'
     SETTING_VALUE_X_UBUNTU_GET_TEXT_DOMAIN = 'indicator-weather'
-    
+
