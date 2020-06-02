@@ -1,3 +1,10 @@
+indicator-weather (2.0-0) UNRELEASED; urgency=medium
+
+  * python3
+  * add option to show C with miles
+
+ -- Phoenix09 <Phoenix09@users.noreply.github.com>  Tue, 02 Jun 2020 05:08:34 +0100
+
 indicator-weather (1.1-0ubuntu5) trusty; urgency=low
 
   * Prepare 1.1 release from upstream
